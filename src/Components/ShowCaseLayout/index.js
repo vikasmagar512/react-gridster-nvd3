@@ -4,7 +4,7 @@ import _ from "lodash";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import './index.css';
 import GridComp from '../GridComp';
-
+import {generateLayout} from '../Tab/index.js'
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 export default class ShowcaseLayout extends React.Component {
@@ -15,32 +15,44 @@ export default class ShowcaseLayout extends React.Component {
       compactType: "vertical",
       mounted: false,
     //   layouts: { lg: props.initialLayout }
-      layouts: { lg: props.initialLayout }
+      layouts: { lg: props.layout }
     };
 
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
     this.onCompactTypeChange = this.onCompactTypeChange.bind(this);
     this.onLayoutChange = this.onLayoutChange.bind(this);
     this.onNewLayout = this.onNewLayout.bind(this);
+    this.onAddItem = this.onAddItem.bind(this);
+    this.onRemoveItem = this.onRemoveItem.bind(this);
+    // this.generateDOM = this.generateDOM.bind(this);
+    
   }
 
   componentDidMount() {
     this.setState({ mounted: true });
   }
   componentWillReceiveProps(newProps,nextState){
-
+    debugger
+    if(newProps.layout){
+      if(JSON.stringify(newProps.layout) !== JSON.stringify(this.props.layout)){
+        this.setState({layouts: { lg: newProps.layout }})
+      }
+    }
   }
 
   generateDOM() {
+    let k = this
     return _.map(this.state.layouts.lg, function(l, i) {
       return (
         <div key={i} className={l.static ? "static" : ""}>
-          <GridComp></GridComp>
+            <GridComp index={i} layout={l}
+              onAddItem = {k.onAddItem}
+              onRemoveItem = {k.onAddItem}
+            ></GridComp>
         </div>
       );
     });
   }
-
   onBreakpointChange(breakpoint) {
     this.setState({
       currentBreakpoint: breakpoint
@@ -63,12 +75,18 @@ export default class ShowcaseLayout extends React.Component {
   }
   
   onNewLayout() {
-    // this.props.onLayoutChange(layout, layouts);
-    this.setState({
-      layouts: { lg: generateLayout() }
-    });
+    this.props.generateNewLayout()
+    // this.setState({
+    //   layouts: { lg: generateLayout() }
+    // });
   }
-
+  onAddItem(){
+    this.props.onAddItem()
+  }
+  
+  onRemoveItem(i){
+    this.props.onRemoveItem(i)
+  }
   render() {
     return (
       <div>
@@ -86,6 +104,7 @@ export default class ShowcaseLayout extends React.Component {
         <button onClick={this.onCompactTypeChange}>
           Change Compaction Type
         </button>
+        <button onClick={this.onAddItem}>Add Item</button>
         <ResponsiveReactGridLayout
           {...this.props}
           layouts={this.state.layouts}
@@ -107,7 +126,8 @@ export default class ShowcaseLayout extends React.Component {
 }
 
 ShowcaseLayout.propTypes = {
-  onLayoutChange: PropTypes.func.isRequired
+  onLayoutChange: PropTypes.func.isRequired,
+  generateNewLayout: PropTypes.func.isRequired,
 };
 
 ShowcaseLayout.defaultProps = {
