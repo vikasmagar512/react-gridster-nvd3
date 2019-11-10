@@ -4,7 +4,6 @@ import _ from "lodash";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import './index.css';
 import GridComp from '../GridComp';
-import {generateLayout} from '../Tab/index.js'
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 export default class ShowcaseLayout extends React.Component {
@@ -14,7 +13,6 @@ export default class ShowcaseLayout extends React.Component {
       currentBreakpoint: "lg",
       compactType: "vertical",
       mounted: false,
-    //   layouts: { lg: props.initialLayout }
       layouts: { lg: props.layout }
     };
 
@@ -24,8 +22,6 @@ export default class ShowcaseLayout extends React.Component {
     this.onNewLayout = this.onNewLayout.bind(this);
     this.onAddItem = this.onAddItem.bind(this);
     this.onRemoveItem = this.onRemoveItem.bind(this);
-    // this.generateDOM = this.generateDOM.bind(this);
-    
   }
 
   componentDidMount() {
@@ -42,12 +38,13 @@ export default class ShowcaseLayout extends React.Component {
 
   generateDOM() {
     let k = this
-    return _.map(this.state.layouts.lg, function(l, i) {
+    return _.map(this.state.layouts.lg, function(l, index) {
       return (
-        <div key={i} className={l.static ? "static" : ""}>
-            <GridComp index={i} layout={l}
+        <div key={index} className={l.static ? "static" : ""}>
+            <GridComp 
+              layout={l}
               onAddItem = {k.onAddItem}
-              onRemoveItem = {k.onAddItem}
+              onRemoveItem = {k.onRemoveItem}
             ></GridComp>
         </div>
       );
@@ -76,10 +73,8 @@ export default class ShowcaseLayout extends React.Component {
   
   onNewLayout() {
     this.props.generateNewLayout()
-    // this.setState({
-    //   layouts: { lg: generateLayout() }
-    // });
   }
+  
   onAddItem(){
     this.props.onAddItem()
   }
