@@ -10,7 +10,7 @@
     "react-dom": "^16.10.2",
     "react-grid-layout": "^0.17.1",
     "react-nvd3": "^0.5.7",
-    "react-scripts": "3.2.0",
+    "react-scripts": "5.0.1",
     "react-tabtab": "^2.0.0",
     "styled-components": "^4.0.0"
   },
